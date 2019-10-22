@@ -1,6 +1,6 @@
 {
   "name": "@holochain/fidget-spinner",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Tools to help with @holochain/try-o-rama stress testing",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
