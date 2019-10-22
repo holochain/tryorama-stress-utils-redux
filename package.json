@@ -1,0 +1,35 @@
+{
+  "name": "@holochain/fidget-spinner",
+  "version": "0.0.0",
+  "description": "Tools to help with @holochain/try-o-rama stress testing",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "rm -rf ./lib ; tsc -d",
+    "dev": "tsc -d -w",
+    "doc": "typedoc",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test",
+    "test": "ts-node test | tap-diff"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@holochain/try-o-rama": "^0.1.2-beta.4",
+    "ramda": "^0.26.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.5",
+    "@types/ramda": "^0.26.33",
+    "sinon": "^7.4.2",
+    "tap-diff": "^0.1.1",
+    "tape": "^4.11.0",
+    "tape-promise": "^4.0.0",
+    "ts-node": "^8.4.1",
+    "typedoc": "^0.15.0",
+    "typescript": "^3.6.3"
+  }
+}
