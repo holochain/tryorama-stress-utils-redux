@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@holochain/try-o-rama": "^0.1.2-beta.4",
+    "@holochain/try-o-rama": "^0.1.3-beta.1",
     "ramda": "^0.26.1"
   },
   "devDependencies": {
