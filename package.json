@@ -1,5 +1,5 @@
 {
-  "name": "@holochain/fidget-spinner",
+  "name": "@holochain/tryorama-stress-utils",
   "version": "0.0.2",
   "description": "Tools to help with @holochain/try-o-rama stress testing",
   "main": "lib/index.js",

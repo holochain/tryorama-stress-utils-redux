@@ -1,4 +1,4 @@
-# fidget-spinner
+# tryorama-stress-utils
 
 A small API to help with writing try-o-rama tests involving many conductors and instances.
 
