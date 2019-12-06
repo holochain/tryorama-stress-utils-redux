@@ -1,8 +1,8 @@
 import * as R from 'ramda'
 
-import { Player } from '@holochain/try-o-rama'
-import { Instance } from '@holochain/try-o-rama'
-import { DnaConfig, ConductorConfig, SugaredConductorConfig } from '@holochain/try-o-rama'
+import { Player, Config, Fort, ConductorConfigCommon, SugaredInstancesConfig } from '@holochain/tryorama'
+import { Instance } from '@holochain/tryorama'
+import { DnaConfig } from '@holochain/tryorama'
 
 /**
  * Takes an object whose keys correspond to array indices,
@@ -28,10 +28,11 @@ const trace = R.tap(<A>(x: A) => console.log('{T} ', x))
  * using the specified DNA.
  * Note that the instance IDs are *strings*, from '0' to M
  */
-export const configBatchSimple = (numConductors: number, numInstances: number, dna: DnaConfig): Array<SugaredConductorConfig> => {
-  const conductor: SugaredConductorConfig = R.pipe(
-    R.reduce((o, n) => R.assoc(String(n), dna, o), {}),
-    x => ({ instances: x }),
+export const configBatchSimple = (numConductors: number, numInstances: number, dna: DnaConfig, configCommon: Fort<ConductorConfigCommon>) => {
+  const conductor = R.pipe(
+    R.map(n => [`${n}`, dna]),
+    R.fromPairs,
+    (x: SugaredInstancesConfig) => Config.gen(x, configCommon),
   )(R.range(0, numInstances))
   return R.repeat(conductor, numConductors)
 }

@@ -1,7 +1,7 @@
 {
   "name": "@holochain/tryorama-stress-utils",
   "version": "0.0.3",
-  "description": "Tools to help with @holochain/try-o-rama stress testing",
+  "description": "Tools to help with @holochain/tryorama stress testing",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "directories": {
@@ -18,7 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@holochain/tryorama": "^0.2.0",
+    "@holochain/tryorama": "^0.3.0-rc.3",
     "ramda": "^0.26.1"
   },
   "devDependencies": {
