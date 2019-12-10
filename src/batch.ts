@@ -1,5 +1,4 @@
 import * as R from 'ramda'
-import chunk from 'lodash.chunk'
 
 import { Player, Config, Fort, ConductorConfigCommon, SugaredInstancesConfig, ConfigSeed } from '@holochain/tryorama'
 import { Instance } from '@holochain/tryorama'
@@ -21,7 +20,7 @@ const indexedObjectToArray = <T>(o: { [n: string]: T }): Array<T> => {
   )(o)
 }
 
-const trace = R.tap(<A>(x: A) => console.log('{T} ', x))
+const trace = R.tap(<A>(x: A) => console.log(`{T} (${typeof x})`, x))
 
 /**
  * Construct an array of N conductor configs,
@@ -29,13 +28,13 @@ const trace = R.tap(<A>(x: A) => console.log('{T} ', x))
  * using the specified DNA.
  * Note that the instance IDs are *strings*, from '0' to M
  */
-export const configBatchSimple = (numConductors: number, numInstances: number, dna: DnaConfig, configCommon: Fort<ConductorConfigCommon>): Array<Array<ConfigSeed>> => {
-  return R.pipe(
-    R.map(n => [`${n}`, dna]),
+export const configBatchSimple = (numConductors: number, numInstances: number, dna: DnaConfig, configCommon: Fort<ConductorConfigCommon>): Array<ConfigSeed> => {
+  const conductor = R.pipe(
+    R.map(n => [`instance-${n}`, dna]),
     R.fromPairs,
     (instances: SugaredInstancesConfig) => Config.gen(instances, configCommon),
-    x => chunk(numInstances, x)
-  )(R.range(0, numInstances * numConductors))
+  )(R.range(0, numInstances))
+  return R.repeat(conductor, numConductors)
 }
 
 type IterationMode = 'series' | 'parallel'
@@ -105,7 +104,7 @@ export class Batch {
         .filter(this._playerFilter)
         .map(player => player
           .instances(this._instanceFilter)
-          .map(i => R.assoc('player', player, trace(i)))
+          .map(i => R.assoc('player', player, i))
         )
     )
     return this._mapper(instances, fn)
