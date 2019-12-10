@@ -1,6 +1,7 @@
 import * as R from 'ramda'
+import chunk from 'lodash.chunk'
 
-import { Player, Config, Fort, ConductorConfigCommon, SugaredInstancesConfig } from '@holochain/tryorama'
+import { Player, Config, Fort, ConductorConfigCommon, SugaredInstancesConfig, ConfigSeed } from '@holochain/tryorama'
 import { Instance } from '@holochain/tryorama'
 import { DnaConfig } from '@holochain/tryorama'
 
@@ -28,13 +29,13 @@ const trace = R.tap(<A>(x: A) => console.log('{T} ', x))
  * using the specified DNA.
  * Note that the instance IDs are *strings*, from '0' to M
  */
-export const configBatchSimple = (numConductors: number, numInstances: number, dna: DnaConfig, configCommon: Fort<ConductorConfigCommon>) => {
-  const conductor = R.pipe(
+export const configBatchSimple = (numConductors: number, numInstances: number, dna: DnaConfig, configCommon: Fort<ConductorConfigCommon>): Array<Array<ConfigSeed>> => {
+  return R.pipe(
     R.map(n => [`${n}`, dna]),
     R.fromPairs,
-    (x: SugaredInstancesConfig) => Config.gen(x, configCommon),
-  )(R.range(0, numInstances))
-  return R.repeat(conductor, numConductors)
+    (instances: SugaredInstancesConfig) => Config.gen(instances, configCommon),
+    x => chunk(numInstances, x)
+  )(R.range(0, numInstances * numConductors))
 }
 
 type IterationMode = 'series' | 'parallel'
