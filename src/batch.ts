@@ -30,7 +30,7 @@ const trace = R.tap(<A>(x: A) => console.log(`{T} (${typeof x})`, x))
  */
 export const configBatchSimple = (numConductors: number, numInstances: number, dna: DnaConfig, configCommon: Fort<ConductorConfigCommon>): Array<ConfigSeed> => {
   const conductor = R.pipe(
-    R.map(n => [`instance-${n}`, dna]),
+    R.map(n => [String(n), dna]),
     R.fromPairs,
     (instances: SugaredInstancesConfig) => Config.gen(instances, configCommon),
   )(R.range(0, numInstances))

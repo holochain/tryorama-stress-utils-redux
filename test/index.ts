@@ -20,8 +20,8 @@ test('configBatchSimple', async t => {
   t.equal(configs.length, 3)
   for(let i = 0; i < 3; i++) {
     t.equal(configs[i].agents.length, 2)
-    t.equal(configs[i].agents[0].name, 'playerName::instance-0::uuid')
-    t.equal(configs[i].agents[1].name, 'playerName::instance-1::uuid')
+    t.equal(configs[i].agents[0].name, 'playerName::0::uuid')
+    t.equal(configs[i].agents[1].name, 'playerName::1::uuid')
     t.equal(configs[i].instances.length, 2)
   }
   t.end()
