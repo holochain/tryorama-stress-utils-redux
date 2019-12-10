@@ -1,4 +1,5 @@
 import { spawn, ChildProcess } from 'child_process'
+import * as _ from 'lodash'
 
 const moniker = require('moniker')
 
