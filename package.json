@@ -19,9 +19,12 @@
   "license": "ISC",
   "dependencies": {
     "@holochain/tryorama": "^0.3.0-rc.3",
+    "lodash.chunk": "^4.2.0",
+    "moniker": "^0.1.2",
     "ramda": "^0.26.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.149",
     "@types/node": "^12.7.5",
     "@types/ramda": "^0.26.33",
     "sinon": "^7.4.2",
