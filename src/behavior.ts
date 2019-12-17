@@ -8,30 +8,30 @@
 import { ScenarioApi } from '@holochain/tryorama/lib/api'
 
 
-type BehaviorConstructorArgs<D> = {
-  init: BehaviorInit<D>,
-  stage: BehaviorStage<D>,
-  parameters: BehaviorParams,
+type ConstructorArgs<D> = {
+  init: Init<D>,
+  stage: Stage<D>,
+  parameters: Params,
 }
 
-type BehaviorRunArgs = {
+type RunArgs = {
   stageDurationMs: number
 }
 
-export class Behavior<D> {
+export class ParameterizedBehavior<D> {
 
-  init: BehaviorInit<D>
-  stage: BehaviorStage<D>
-  paramDefs: BehaviorParams
+  init: Init<D>
+  stage: Stage<D>
+  paramDefs: Params
 
-  constructor(args: BehaviorConstructorArgs<D>) {
+  constructor(args: ConstructorArgs<D>) {
     this.init = args.init
     this.stage = args.stage
     this.paramDefs = args.parameters
   }
 
-  genArgs = (paramDefs: BehaviorParams, stage: number): BehaviorArgs => {
-    const args: BehaviorArgs = {}
+  genArgs = (paramDefs: Params, stage: number): Args => {
+    const args: Args = {}
     paramDefs.forEach(([name, generator]) => {
       args[name] = generator(stage)
     })
@@ -51,9 +51,9 @@ export class Behavior<D> {
         stage += 1
       } catch (e) {
         console.error(`
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! BEHAVIOR TEST FAILED !!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! PARAMETERIZED BEHAVIOR TEST FAILED !!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 error: ${e}
 stage: ${stage}
@@ -63,18 +63,16 @@ args: ${JSON.stringify(args, null, 2)}
       }
     }
   }
-
-  static param = <P>(name: string, func: BehaviorParamFunction<P>): BehaviorParamDef<P> => [name, func]
 }
 
-type BehaviorArgs = Record<string, any>
-type BehaviorInit<D> = () => Promise<D>
-type BehaviorStage<D> = (state: D, args: BehaviorArgs) => Promise<D>
-type BehaviorParamFunction<P> = (t: number) => P
-type BehaviorParamDef<P> = [string, BehaviorParamFunction<P>]
-// type BehaviorParams1<P> = [BehaviorParamDef<P>]
-// type BehaviorParams2<P, Q> = [BehaviorParamDef<P>, BehaviorParamDef<Q>]
-// type BehaviorParams3<P, Q, R> = [BehaviorParamDef<P>, BehaviorParamDef<Q>, BehaviorParamDef<R>]
-// type BehaviorParams4<P, Q, R, S> = [BehaviorParamDef<P>, BehaviorParamDef<Q>, BehaviorParamDef<R>, BehaviorParamDef<S>]
-type BehaviorParamsN = Array<BehaviorParamDef<any>>
-type BehaviorParams = BehaviorParamsN
+type Args = Record<string, any>
+type Init<D> = () => Promise<D>
+type Stage<D> = (state: D, args: Args) => Promise<D>
+type ParamFunction<P> = (t: number) => P
+type ParamDef<P> = [string, ParamFunction<P>]
+// type Params1<P> = [ParamDef<P>]
+// type Params2<P, Q> = [ParamDef<P>, ParamDef<Q>]
+// type Params3<P, Q, R> = [ParamDef<P>, ParamDef<Q>, ParamDef<R>]
+// type Params4<P, Q, R, S> = [ParamDef<P>, ParamDef<Q>, ParamDef<R>, ParamDef<S>]
+type ParamsN = Array<ParamDef<any>>
+type Params = ParamsN
