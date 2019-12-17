@@ -20,19 +20,17 @@ test('can specify parameterized behavior', async t => {
     if (args.stage >= 3) {
       throw new Error("artificial failure")
     }
-    console.log(spy)
     spy(args)
-    // collectedArgs.push(args)
     return spy
   }
 
   const behavior = new ParameterizedBehavior({
     init, stage,
-    parameters: [
-      ['frequency', t => 5000 - t * 1000],
-      ['volume', t => 100 + 10 * t],
-      ['stage', t => t],
-    ]
+    parameters: {
+      frequency: t => 5000 - t * 1000,
+      volume: t => 100 + 10 * t,
+      stage: t => t,
+    }
   })
 
   await t.rejects(behavior.run(), /artificial failure/)
