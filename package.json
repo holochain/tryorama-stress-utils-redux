@@ -13,7 +13,7 @@
     "doc": "typedoc",
     "prepare": "npm run build",
     "prepublishOnly": "npm test",
-    "test": "ts-node test"
+    "test": "ts-node test | tap-diff"
   },
   "author": "",
   "license": "ISC",

@@ -1,29 +1,28 @@
 
-import * as test from 'tape'
-// import tapeP from 'tape-promise'
-// const test = tapeP(tape)
+import * as tape from 'tape'
+import tapeP from 'tape-promise'
+const test = tapeP(tape)
 import { Player } from '@holochain/tryorama'
 import { Behavior } from '../src'
+import * as sinon from 'sinon'
 
-// import * as sinon from 'sinon'
-
-const C: any = undefined
+const trace = x => (console.log('{T}', x), x)
 
 test('can specify behavior', async t => {
 
-  const collectedArgs: Array<any> = []
+  const injectedSpy = sinon.spy()
 
   const init = async () => {
-    return null
-    // return sinon.spy()
+    return injectedSpy
   }
 
   const stage = async (spy, args) => {
     if (args.stage >= 3) {
       throw new Error("artificial failure")
     }
-    // spy.f(args)
-    collectedArgs.push(args)
+    console.log(spy)
+    spy(args)
+    // collectedArgs.push(args)
     return spy
   }
 
@@ -36,15 +35,10 @@ test('can specify behavior', async t => {
     ]
   })
 
-  // await t.rejects(behavior.run(), /artificial failure/)
+  await t.rejects(behavior.run(), /artificial failure/)
 
-  try {
-    await behavior.run()
-  } catch (e) {
-    t.equal(e.message, 'artificial failure')
-  }
-
-  t.deepEqual(collectedArgs, [
+  const actualArgs = injectedSpy.getCalls().map(c => c.lastArg)
+  t.deepEqual(actualArgs, [
     {
       frequency: 5000,
       volume: 100,
