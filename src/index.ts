@@ -1,3 +1,4 @@
-// export * from './batch'
-// export * from './local'
-export * from './behavior'
+export * from './batch'
+export { ParameterizedBehavior } from './behavior'
+export * from './local'
+export * from './stochastic-piecewise'
