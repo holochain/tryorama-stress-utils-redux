@@ -3,6 +3,7 @@
  */
 
 import * as _ from 'lodash'
+import logger from './logger'
 
 type ConstructorArgs<D> = {
   init: Init<D>,
@@ -37,7 +38,9 @@ export class ParameterizedBehavior<D> {
     let data: D = await this.init()
     let stage = 0
     while (this.shouldContinue()) {
+      logger.debug("behavior.run: stage", stage)
       const args = this.genArgs(this.paramDefs, stage)
+      logger.debug("behavior.run: generated args:", args)
       try {
         data = await this.stage(data, args)
         stage += 1
