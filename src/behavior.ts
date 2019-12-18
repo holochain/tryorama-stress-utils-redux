@@ -11,53 +11,36 @@ type ConstructorArgs<D> = {
   parameters: Params,
 }
 
-type RunArgs = {
-  stageDurationMs: number
-}
+export const parameterizedStages = async <D>(a: ConstructorArgs<D>): Promise<void> => {
+  const {init, stage, parameters} = a
+  let shouldContinue = true
+  let data: D = await init()
+  let time = 0
 
-export class ParameterizedBehavior<D> {
-
-  init: Init<D>
-  stage: Stage<D>
-  paramDefs: Params
-
-  constructor(args: ConstructorArgs<D>) {
-    this.init = args.init
-    this.stage = args.stage
-    this.paramDefs = args.parameters
-  }
-
-  genArgs = (paramDefs: Params, stage: number): Args => {
-    return _.mapValues(paramDefs, generator => generator(stage))
-  }
-
-  // TODO: should there ever be a stopping condition other than failure?
-  shouldContinue = () => true
-
-  run = async () => {
-    let data: D = await this.init()
-    let stage = 0
-    while (this.shouldContinue()) {
-      logger.debug("behavior.run: stage", stage)
-      const args = this.genArgs(this.paramDefs, stage)
-      logger.debug("behavior.run: generated args:", args)
-      try {
-        data = await this.stage(data, args)
-        stage += 1
-      } catch (e) {
-        console.error(`
+  while (shouldContinue) {
+    logger.debug("parameterizedStages: stage", time)
+    const args = genArgs(parameters, time)
+    logger.debug("parameterizedStages: generated args:", args)
+    try {
+      data = await stage(data, args)
+      time += 1
+    } catch (e) {
+      console.error(`
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!! PARAMETERIZED BEHAVIOR TEST FAILED !!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 error: ${e}
-stage: ${stage}
+stage: ${time}
 args: ${JSON.stringify(args, null, 2)}
-        `)
-        throw e
-      }
+      `)
+      throw e
     }
   }
+}
+
+const genArgs = (paramDefs: Params, stage: number): Args => {
+  return _.mapValues(paramDefs, generator => generator(stage))
 }
 
 export type Args = Record<string, any>

@@ -3,7 +3,7 @@ import * as tape from 'tape'
 import tapeP from 'tape-promise'
 const test = tapeP(tape)
 import { Player } from '@holochain/tryorama'
-import { ParameterizedBehavior } from '../src'
+import { parameterizedStages } from '../src'
 import * as sinon from 'sinon'
 
 const trace = x => (console.log('{T}', x), x)
@@ -24,7 +24,7 @@ test('can specify parameterized behavior', async t => {
     return spy
   }
 
-  const behavior = new ParameterizedBehavior({
+  const promise = parameterizedStages({
     init, stage,
     parameters: {
       frequency: t => 5000 - t * 1000,
@@ -33,7 +33,7 @@ test('can specify parameterized behavior', async t => {
     }
   })
 
-  await t.rejects(behavior.run(), /artificial failure/)
+  await t.rejects(promise, /artificial failure/)
 
   const actualArgs = injectedSpy.getCalls().map(c => c.lastArg)
   t.deepEqual(actualArgs, [

@@ -8,8 +8,8 @@ import logger from "./logger"
  * Returns a promise that resolves when the specified duration has passed and the function will run no longer
  *
  */
-export const Periodically = <D>(a: {duration: number, period: number, action: () => void}) => new Promise((fulfill) => {
-  const {period, action} = a
+export const periodically = <D>(a: {duration: number, period: number}, action: () => void) => new Promise((fulfill) => {
+  const {period} = a
   let {duration} = a
   if (duration < period) {
     throw new Error("duration is less than the period: no action will occur!")
@@ -21,6 +21,7 @@ export const Periodically = <D>(a: {duration: number, period: number, action: ()
   logger.debug('Periodically: starting', duration, period)
   const each = () => {
     logger.debug('Periodically: running action')
+    // TODO: collect promises for a big Promise.all at the end?
     action()
   }
   each()

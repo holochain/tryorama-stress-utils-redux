@@ -3,8 +3,7 @@ import * as tape from 'tape'
 import * as R from 'ramda'
 import tapeP from 'tape-promise'
 const test = tapeP(tape)
-import { Player } from '@holochain/tryorama'
-import { Periodically, ParameterizedBehavior } from '../src'
+import { periodically } from '../src'
 import * as sinon from 'sinon'
 import { withClock, delay } from './common'
 
@@ -12,11 +11,7 @@ import { withClock, delay } from './common'
 test('can define a Periodicaly running function', withClock(async (t, clk) => {
   const spy = sinon.spy()
 
-  const promise = Periodically({
-    period: 1000,
-    duration: 10000,
-    action: () => spy()
-  })
+  const promise = periodically({period: 1000, duration: 10000}, () => spy())
 
   t.equal(spy.callCount, 1)
   clk.tick(4000)
