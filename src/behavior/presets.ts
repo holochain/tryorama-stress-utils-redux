@@ -10,9 +10,10 @@ import * as R from 'ramda'
  * Returns a promise that resolves when the specified duration has passed and the function will run no longer
  *
  */
-export const periodically = <D>(a: {duration: number, period: number}, action: () => void) => new Promise((fulfill) => {
-  const {period} = a
+export const periodically = <D>(a: PeriodicallyArgs, action: () => Promise<any>) => new Promise((fulfill) => {
+  const {period, awaitAll} = a
   let {duration} = a
+  let promises: Array<Promise<any>> = []
   if (duration < period) {
     throw new Error("duration is less than the period: no action will occur!")
   } else if (duration % period === 0) {
@@ -24,7 +25,7 @@ export const periodically = <D>(a: {duration: number, period: number}, action: (
   const each = () => {
     logger.debug('Periodically: running action')
     // TODO: collect promises for a big Promise.all at the end?
-    action()
+    promises.push(action())
   }
   each()
   const interval = setInterval(each, period)
@@ -32,9 +33,19 @@ export const periodically = <D>(a: {duration: number, period: number}, action: (
   setTimeout(() => {
     clearInterval(interval)
     logger.debug('Periodically: fulfilled')
-    fulfill()
+    if (awaitAll) {
+      fulfill(Promise.all(promises))
+    } else {
+      fulfill()
+    }
   }, duration)
 })
+
+type PeriodicallyArgs = {
+  duration: number,
+  period: number,
+  awaitAll?: boolean,
+}
 
 export const stochasticPiecewise = (weightedFuncs: Array<[Function, number]>): Function => {
 
