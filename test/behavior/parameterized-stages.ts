@@ -3,12 +3,12 @@ import * as tape from 'tape'
 import tapeP from 'tape-promise'
 const test = tapeP(tape)
 import { Player } from '@holochain/tryorama'
-import { parameterizedStages } from '../src'
+import { parameterizedStages } from '../../src'
 import * as sinon from 'sinon'
 
 const trace = x => (console.log('{T}', x), x)
 
-test('can specify parameterized behavior', async t => {
+test('can specify parameterized stages of behavior', async t => {
 
   const injectedSpy = sinon.spy()
 

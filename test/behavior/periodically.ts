@@ -1,11 +1,9 @@
-
 import * as tape from 'tape'
-import * as R from 'ramda'
 import tapeP from 'tape-promise'
 const test = tapeP(tape)
-import { periodically } from '../src'
+import { periodically } from '../../src/behavior'
 import * as sinon from 'sinon'
-import { withClock, delay } from './common'
+import { withClock, delay } from '../common'
 
 
 test('can define a Periodicaly running function', withClock(async (t, clk) => {
@@ -24,3 +22,4 @@ test('can define a Periodicaly running function', withClock(async (t, clk) => {
 
   t.end()
 }))
+

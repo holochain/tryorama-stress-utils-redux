@@ -1,6 +1,6 @@
 
 
 // require('./batch')
-require('./behavior')
-require('./behavior-presets')
-require('./stochastic-piecewise')
+require('./behavior/parameterized-stages')
+require('./behavior/periodically')
+require('./behavior/stochastic-piecewise')

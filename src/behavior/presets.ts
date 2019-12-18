@@ -1,9 +1,11 @@
-import { Args, Init, Stage } from "./behavior"
+import { Args, Init, Stage } from "."
 import { ScenarioApi } from "@holochain/tryorama/lib/api"
-import logger from "./logger"
-
+import logger from "../logger"
+import * as R from 'ramda'
 
 /**
+ *
+ *
  * Periodically run a function for a given amount of time.
  * Returns a promise that resolves when the specified duration has passed and the function will run no longer
  *
@@ -33,3 +35,23 @@ export const periodically = <D>(a: {duration: number, period: number}, action: (
     fulfill()
   }, duration)
 })
+
+export const stochasticPiecewise = (weightedFuncs: Array<[Function, number]>): Function => {
+
+  // get normalized probabilities from the weights
+  const totalProb = R.sum(weightedFuncs.map(([_, prob]) => prob))
+  weightedFuncs = weightedFuncs.map(([fn, prob]) => [fn, prob / totalProb])
+
+  return () => {
+    const random = Math.random()
+    let cumulative = 0
+
+    for (const pair of weightedFuncs) {
+      const [fn, prob] = pair
+      cumulative += prob
+      if (cumulative >= random) {
+        return fn()
+      }
+    }
+  }
+}

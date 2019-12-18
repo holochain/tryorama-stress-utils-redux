@@ -1,10 +1,8 @@
-
 import * as tape from 'tape'
 import * as R from 'ramda'
 import tapeP from 'tape-promise'
 const test = tapeP(tape)
-import { Player } from '@holochain/tryorama'
-import { stochasticPiecewise } from '../src'
+import { stochasticPiecewise } from '../../src/behavior'
 import * as sinon from 'sinon'
 
 

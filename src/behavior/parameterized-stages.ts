@@ -3,7 +3,7 @@
  */
 
 import * as _ from 'lodash'
-import logger from './logger'
+import logger from '../logger'
 
 type ConstructorArgs<D> = {
   init: Init<D>,
