@@ -1,6 +1,6 @@
 import { createLogger, format, transports } from 'winston'
 
-const logLevel = 'debug'
+const logLevel = 'info'
 
 const logger = createLogger({
   levels: {

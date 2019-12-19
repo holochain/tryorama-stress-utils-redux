@@ -33,7 +33,7 @@ test('parameterized stages works, and aborts on exception', async t => {
     }
   })
 
-  t.equal(result.error.message, 'artificial failure')
+  t.equal(result.error!.message, 'artificial failure')
 
   const actualArgs = injectedSpy.getCalls().map(c => c.lastArg)
   t.deepEqual(actualArgs, [
@@ -79,7 +79,7 @@ test('parameterized stages aborts on exception within stage', async t => {
     parameters: { stage: t => t }
   })
 
-  t.equal(result.error.message, 'artificial failure')
+  t.equal(result.error!.message, 'artificial failure')
   t.equal(injectedSpy.callCount, 3)
   t.ok(failSpy.calledOnce)
   t.equal(failSpy.firstCall.args[0].message, 'artificial failure')
@@ -115,7 +115,33 @@ test('parameterized stage failure can be triggered from outside', async t => {
   const result = await promise
 
   t.equal(injectedSpy.callCount, 3)
-  t.equal(result.error.message, 'trigger error from outside')
+  t.equal(result.error!.message, 'trigger error from outside')
+
+  t.end()
+})
+
+test('max number of stages can be set', async t => {
+
+  const injectedSpy = sinon.spy()
+  const failSpy = sinon.spy()
+
+  const init = async () => injectedSpy
+
+  const stage = async (spy, args) => {
+    spy(args)
+    return spy
+  }
+
+  const result = await parameterizedStages({
+    init, stage,
+    fail: failSpy,
+    stageLimit: 3,
+    parameters: { stage: t => t }
+  })
+
+  t.equal(injectedSpy.callCount, 3)
+  t.ok(failSpy.notCalled)
+  t.ok(result.success)
 
   t.end()
 })

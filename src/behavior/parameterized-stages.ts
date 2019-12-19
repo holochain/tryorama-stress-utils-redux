@@ -9,6 +9,7 @@ type ConstructorArgs<D> = {
   init: Init<D>,
   stage: Stage<D>,
   parameters: Params,
+  stageLimit?: number,
   fail?: Fail,
   failHandler?: FailHandler,
 }
@@ -25,9 +26,13 @@ export type FailInfo = {
   stage: number,
   args: Args,
 }
+export type Success = {
+  success: string
+}
+export type StagesResult = Partial<FailInfo> & Partial<Success>
 
-export const parameterizedStages = async <D>(a: ConstructorArgs<D>): Promise<FailInfo> => {
-  const {init, stage, parameters} = a
+export const parameterizedStages = async <D>(a: ConstructorArgs<D>): Promise<StagesResult> => {
+  const {init, stage, stageLimit, parameters} = a
   let failure: Error | null = null
   const fail: Fail = (error: Error) => {
     if (!(error instanceof Error)) {
@@ -46,8 +51,9 @@ export const parameterizedStages = async <D>(a: ConstructorArgs<D>): Promise<Fai
   let data: D = await init()
   let time = 0
   let args: Args | null = null
+  const limitReached = time => stageLimit && time >= stageLimit
 
-  while (!failure) {
+  while (!failure && !limitReached(time)) {
     args = genArgs(parameters, time)
     logger.info(`
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -62,14 +68,21 @@ export const parameterizedStages = async <D>(a: ConstructorArgs<D>): Promise<Fai
     }
   }
 
-  const failInfo = {
-    stage: time,
-    args: args!,
-    error: failure,
+  if (failure) {
+    const failInfo = {
+      stage: time,
+      args: args!,
+      error: failure,
+    }
+
+    onFail(failInfo, data)
+    return failInfo
+  } else {
+    return {
+      success: 'Final stage reached with no error'
+    }
   }
 
-  onFail(failInfo, data)
-  return failInfo
 }
 
 const genArgs = (paramDefs: Params, stage: number): Args => {
