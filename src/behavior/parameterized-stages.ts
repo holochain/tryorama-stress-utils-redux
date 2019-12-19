@@ -10,15 +10,17 @@ type ConstructorArgs<D> = {
   stage: Stage<D>,
   parameters: Params,
   fail?: Fail,
+  failHandler?: FailHandler,
 }
 
 export type Args = Record<string, any>
 export type Init<D> = () => Promise<D>
 export type Stage<D> = (state: D, args: Args, fail: Fail) => Promise<D>
-type ParamFunction<P> = (t: number) => P
-type Params = Record<string, ParamFunction<any>>
-type Fail = (error: Error) => void
-type FailInfo = {
+export type ParamFunction<P> = (t: number) => P
+export type Params = Record<string, ParamFunction<any>>
+export type Fail = (error: Error) => void
+export type FailHandler = (fail: Fail) => void
+export type FailInfo = {
   error: Error,
   stage: number,
   args: Args,
@@ -36,19 +38,27 @@ export const parameterizedStages = async <D>(a: ConstructorArgs<D>): Promise<Fai
     }
     failure = error
   }
+
+  if (a.failHandler) {
+    a.failHandler(fail)
+  }
+
   let data: D = await init()
   let time = 0
   let args: Args | null = null
 
   while (!failure) {
-    logger.debug("parameterizedStages: stage", time)
     args = genArgs(parameters, time)
-    logger.debug("parameterizedStages: generated args:", args)
+    logger.info(`
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@ Parameterized Stage: ${time}
+@@@ Args: ${JSON.stringify(args)}
+    `)
     try {
       data = await stage(data, args, fail)
       time += 1
     } catch (e) {
-      failure = e
+      fail(e)
     }
   }
 
@@ -58,7 +68,7 @@ export const parameterizedStages = async <D>(a: ConstructorArgs<D>): Promise<Fai
     error: failure,
   }
 
-  onFail(failInfo)
+  onFail(failInfo, data)
   return failInfo
 }
 
@@ -66,12 +76,19 @@ const genArgs = (paramDefs: Params, stage: number): Args => {
   return _.mapValues(paramDefs, generator => generator(stage))
 }
 
-const onFail = ({stage, args, error}) => {
-  console.error(`
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!! PARAMETERIZED BEHAVIOR TEST FAILED !!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+const onFail = ({stage, args, error}, data) => {
+  const nullDataWarning = data
+  ? ''
+  : `
+The parameterized stage received no data as an argument.
+Did you forget to make your \`init\` or \`stage\` function return something?
+`
 
+  logger.info(`
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! PARAMETERIZED BEHAVIOR TEST FAILED !!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+${nullDataWarning}
 stage: ${stage}
 args: ${JSON.stringify(args, null, 2)}
 error: ${error}

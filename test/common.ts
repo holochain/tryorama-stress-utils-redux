@@ -15,3 +15,5 @@ export const withClock = f => async t => {
 }
 
 export const delay = ms => new Promise(r => setTimeout(r, ms))
+
+export const trace = x => (console.log('{T}', x), x)
