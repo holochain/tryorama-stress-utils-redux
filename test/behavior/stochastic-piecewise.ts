@@ -21,6 +21,8 @@ test('can define a stochastic piecewise function', async t => {
     sp()
   }
 
+  // since the test is stochastic, we can't make any exact numerical assertions,
+  // but we know roughly what the relative frequencies of function calls will be.
   t.ok(spy1.callCount > spy2.callCount)
   t.ok(spy2.callCount > spy3.callCount)
   t.ok(spy3.callCount > 0)
