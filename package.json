@@ -1,6 +1,6 @@
 {
   "name": "@holochain/tryorama-stress-utils",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "Tools to help with @holochain/tryorama stress testing",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -21,13 +21,14 @@
     "@holochain/tryorama": "^0.3.0-rc.3",
     "lodash": "^4.17.15",
     "moniker": "^0.1.2",
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.149",
     "@types/node": "^12.7.5",
     "@types/ramda": "^0.26.33",
-    "sinon": "^7.4.2",
+    "sinon": "^7.5.0",
     "tap-diff": "^0.1.1",
     "tape": "^4.11.0",
     "tape-promise": "^4.0.0",
