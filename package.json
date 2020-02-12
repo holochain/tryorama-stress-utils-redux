@@ -1,6 +1,6 @@
 {
   "name": "@holochain/tryorama-stress-utils",
-  "version": "0.0.8",
+  "version": "0.0.11",
   "description": "Tools to help with @holochain/tryorama stress testing",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
